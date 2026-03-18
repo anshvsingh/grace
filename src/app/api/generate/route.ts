@@ -50,19 +50,21 @@ Return a JSON array ONLY in this exact format, nothing else:
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 4000,
+      max_tokens: 8000,
     });
 
     const content = response.choices[0].message.content || "[]";
 
-    let files;
-    try {
-      // Clean any markdown code fences if present
-      const cleaned = content.replace(/```json|```/g, "").trim();
-      files = JSON.parse(cleaned);
-    } catch {
-      files = [];
-    }
+let files;
+try {
+  const cleaned = content.replace(/```json|```/g, "").trim();
+  console.log("RAW CONTENT:", cleaned.slice(0, 500));
+  files = JSON.parse(cleaned);
+  console.log("PARSED FILES COUNT:", files.length);
+} catch (e) {
+  console.log("PARSE ERROR:", e);
+  files = [];
+}
 
     return NextResponse.json({ files });
 
