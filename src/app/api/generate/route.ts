@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No idea provided" }, { status: 400 });
     }
 
-    const prompt = `You are an expert Next.js developer. Generate a complete working Next.js app.
+    const prompt = `You are an expert React developer. Generate a complete, beautiful, fully working single-page React application.
 
 Project: ${projectName}
 Idea: ${idea}
@@ -21,9 +21,10 @@ Industry: ${industry}
 Audience: ${audience}
 Features: ${features.join(", ")}
 
-Generate these EXACT files with COMPLETE content:
+Generate EXACTLY these files:
 
-1. package.json - use EXACTLY this:
+FILE 1: package.json
+Use EXACTLY this content (no modifications):
 {
   "name": "${projectName.toLowerCase().replace(/[^a-z0-9]/g, '-')}",
   "version": "0.1.0",
@@ -33,7 +34,8 @@ Generate these EXACT files with COMPLETE content:
   "devDependencies": { "@types/node": "^20", "@types/react": "^18", "@types/react-dom": "^18", "typescript": "^5", "tailwindcss": "^3.4.1", "autoprefixer": "^10.0.1", "postcss": "^8" }
 }
 
-2. tsconfig.json - use EXACTLY this:
+FILE 2: tsconfig.json
+Use EXACTLY this content:
 {
   "compilerOptions": {
     "target": "es5", "lib": ["dom", "dom.iterable", "esnext"],
@@ -48,7 +50,8 @@ Generate these EXACT files with COMPLETE content:
   "exclude": ["node_modules"]
 }
 
-3. tailwind.config.ts - use EXACTLY this:
+FILE 3: tailwind.config.ts
+Use EXACTLY this content:
 import type { Config } from "tailwindcss";
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
@@ -57,47 +60,76 @@ const config: Config = {
 };
 export default config;
 
-4. postcss.config.js - use EXACTLY this:
+FILE 4: postcss.config.js
+Use EXACTLY this content:
 module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } }
 
-5. next.config.js - use EXACTLY this:
+FILE 5: next.config.js
+Use EXACTLY this content:
 /** @type {import('next').NextConfig} */
 const nextConfig = {}
 module.exports = nextConfig
 
-6. src/app/globals.css - use EXACTLY this:
+FILE 6: src/app/globals.css
+Use EXACTLY this content:
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-7. src/app/layout.tsx - use EXACTLY this structure:
+FILE 7: src/app/layout.tsx
+Use EXACTLY this content:
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = { title: "${projectName}", description: "${idea}" };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en"><body>{children}</body></html>;
+  return <html lang="en"><body className="bg-gray-950 text-white">{children}</body></html>;
 }
 
-8. src/app/page.tsx - Generate a BEAUTIFUL, COMPLETE landing page for "${projectName}" using Tailwind CSS with:
-- A navbar with the project name
-- A hero section with headline and CTA button
-- A features section with 3 feature cards
-- A footer
-Use ONLY inline Tailwind classes. NO external component imports. Make it visually stunning with colors, gradients, shadows.
+FILE 8: src/app/page.tsx
+Generate a COMPLETE, BEAUTIFUL, FULLY WORKING single page application.
 
-9. Generate 2-3 more pages based on these features: ${features.join(", ")}
-Each page must be self-contained with NO external component imports.
-Each page must use Tailwind CSS classes for styling.
-Each page must be a complete, working React component.
+REQUIREMENTS:
+- Use "use client" at the top
+- Import useState from react
+- Use useState for ALL navigation and interactions
+- Dark theme with beautiful gradients and colors
+- A navbar with the app name and navigation links
+- Each nav link changes the active section using useState
+- Generate ALL these sections based on features: ${features.join(", ")}
+- Every button must DO something using useState
+- Use realistic dummy data (names, dates, prices, etc.)
+- Beautiful cards, modals, forms using Tailwind CSS
+- Professional gradients like: bg-gradient-to-r from-blue-500 to-cyan-500
+- NO external component imports
+- NO missing dependencies
+- The entire app in ONE file
 
-CRITICAL RULES:
-- NEVER import components that aren't in your file list
-- NEVER use placeholder text like "your code here"
-- EVERY file must be 100% complete and working
-- Use Tailwind CSS classes for ALL styling
-- Pages must look professional and modern
+Example of working navigation:
+\`\`\`
+"use client";
+import { useState } from "react";
 
-Return ONLY a valid JSON array with NO markdown backticks:
+export default function App() {
+  const [activeSection, setActiveSection] = useState("home");
+  const [showModal, setShowModal] = useState(false);
+  
+  return (
+    <div>
+      <nav>
+        <button onClick={() => setActiveSection("home")}>Home</button>
+        <button onClick={() => setActiveSection("events")}>Events</button>
+      </nav>
+      {activeSection === "home" && <HomeSection />}
+      {activeSection === "events" && <EventsSection />}
+    </div>
+  );
+}
+\`\`\`
+
+Make the app look like a REAL professional product!
+Generate at least 300 lines of code for page.tsx.
+
+Return ONLY a valid JSON array. No markdown. No backticks. No explanation:
 [
   { "filename": "package.json", "content": "..." },
   { "filename": "tsconfig.json", "content": "..." },
@@ -114,12 +146,12 @@ Return ONLY a valid JSON array with NO markdown backticks:
       messages: [
         {
           role: "system",
-          content: "You are an expert Next.js developer. You always return valid JSON arrays only. No markdown. No backticks. No explanation. Just the JSON array.",
+          content: "You are an expert React and Next.js developer. You ONLY return valid JSON arrays. Never use markdown backticks. Never add explanations. Just the raw JSON array.",
         },
         { role: "user", content: prompt }
       ],
       max_tokens: 8000,
-      temperature: 0.3,
+      temperature: 0.2,
     });
 
     const content = response.choices[0].message.content || "[]";
@@ -131,7 +163,6 @@ Return ONLY a valid JSON array with NO markdown backticks:
         .replace(/```/g, "")
         .trim();
       
-      // Find the JSON array
       const start = cleaned.indexOf("[");
       const end = cleaned.lastIndexOf("]");
       
