@@ -149,12 +149,18 @@ No explanation. No markdown. Just the code starting with "use client";`;
       return f;
     });
 
-    // Add the AI generated page
-    files.push({
-      filename: "src/app/page.tsx",
-      content: pageContent,
-    });
+    // Fix common AI mistakes
+if (!pageContent.startsWith('"use client"')) {
+  pageContent = pageContent.replace(/^use client;?/m, '"use client";');
+  if (!pageContent.includes('"use client"')) {
+    pageContent = '"use client";\n' + pageContent;
+  }
+}
 
+files.push({
+  filename: "src/app/page.tsx",
+  content: pageContent,
+});
     return NextResponse.json({ files });
 
   } catch (error) {
